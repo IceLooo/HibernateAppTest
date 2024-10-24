@@ -1,4 +1,5 @@
 package kz.zhanayev.spring;
+import kz.zhanayev.spring.model.Item;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.MetadataSources;
@@ -7,6 +8,8 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import kz.zhanayev.spring.model.Person;
 import org.hibernate.cfg.Configuration;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -23,7 +26,7 @@ public class App
                 .build();
 
         MetadataSources sources = new MetadataSources(registry)
-                .addAnnotatedClass(Person.class);
+                .addAnnotatedClass(Person.class).addAnnotatedClass(Item.class);
 
 
         SessionFactory sessionFactory = sources.buildMetadata().
@@ -33,25 +36,42 @@ public class App
         Session session = sessionFactory.getCurrentSession();
 
         try {
+
             session.beginTransaction();
 
-//            Person person1 = new Person("Test1", 25);
-//            Person person2 = new Person("Test2", 35);
-//            Person person3 = new Person("Test3", 40);
-//            Person person4 = new Person("Test4", 50);
-//            Person person5 = new Person("Test5", 55);
-//            session.save(person1);
-//            session.save(person2);
-//            session.save(person3);
-//            session.save(person4);
-//            session.save(person5);
+//            Person person = new Person("Riko", 20);
+//            Item newItem = new Item("MacBook Pro 13", person);
+//
+//            person.setItems(new ArrayList<>(Collections.singletonList(newItem)));
+//
+//            session.save(person);
+//            session.save(newItem);
+//
+//            session.getTransaction().commit();
 
 
-            session.createQuery("delete from Person where age > 50").executeUpdate();
+//            Person person = session.get(Person.class, 3);
+//
+//            List<Item> items = person.getItems();
+//            for (Item item : items)
+//                session.remove(item);
+//
+//
+//            person.getItems().clear();
 
+            Person person = session.get(Person.class, 3);
+            Item item = session.get(Item.class, 1);
+
+            item.setOwner(person);
+            person.getItems().add(item);
+
+
+//            session.remove(person);
+//            person.getItems().forEach(i -> i.setOwner(null));
 
 
             session.getTransaction().commit();
+
 
         }finally {
             sessionFactory.close();
